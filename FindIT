@@ -1,0 +1,2319 @@
+from tkinter import *
+from pandas import ExcelWriter
+import pandas as pd
+import webbrowser
+import requests
+
+
+###database = pd.ExcelFile('C:/Code/CODETEST.xlsx').parse(sheet_name="Sheet1", skiprows=0, nrows=3)
+
+excel_data_df_Sheet_1 = pd.read_excel('CODETEST.xlsx', sheet_name='Sheet1', )
+
+##Creating a service list for all services listed under "Serivce name" Column
+My_Service_List = (excel_data_df_Sheet_1['ServiceName'].tolist())
+
+
+
+##JUST CHANGED MY_MULTICAST_LIST!!!! 09/14
+My_Multicast_List = (excel_data_df_Sheet_1[['Dry Creek TVE Encoder Multicast',"Dry Creek Contribution Encoder Multicast","10G WAN DCM Multicast","MUX Multicast","Zixi Multicast XA","Zixi Multicast XB","X NAT US West Card Multicast","X NAT US East Card Multicast","Y NAT US West Card Multicast","Y NAT US East Card Multicast","Gateway Card Multicast","IPX Multicast","HUB DCM X Multicast","HUB DCM Y Multicast","SPOKE DCM X Multicast","SPOKE DCM Y Multicast","NAT X EC CARD Multicast","NAT Y EC CARD Multicast","NAT X EAST CARD Multicast","NAT Y EAST CARD Multicast","Stamford Ya Gateway Multicast","Stamford Yb Gateway Multicast"]].values)
+My_Multicast_List2 = (excel_data_df_Sheet_1['Gateway Card Multicast'].tolist())
+My_Multicast_List3 = (excel_data_df_Sheet_1['IPX Multicast'].tolist())
+
+column2 = excel_data_df_Sheet_1.iloc[0, 3]
+column3 = excel_data_df_Sheet_1.iloc[:0, 4]
+
+root = Tk()
+root.title("FINDIT")
+
+##Creating Entries
+Group = Entry(root, width=50)
+Group.grid(row=0, column=5)
+Source = Entry(root, width=50)
+Source.grid(row=1, column=5)
+Service = Entry(root, width=50)
+Service.grid(row=2, column=5)
+
+##Creating a global var to store row # of service searched
+global Searched_Service_Row_Location
+global Searched_Service_Row_Location_Device
+global Searched_Service_Row_Location_Zixi_Device_Value
+
+##Creating Signal Flow Box For Service Search
+def Standard_Peacock_Service_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    Standard_window = Tk()
+    Standard_window.title("FINDIT")
+    my_canvas = Canvas(Standard_window, width=1000, height=600, background='white')
+    my_canvas.create_line(100, 110, 300, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(300, 110, 550, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(550, 110, 800, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+    if str(Searched_Service_Row_Location_Zixi_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open("https://nbcugmo.zen.zixi.com/#/clusters"))
+        Source1.place(x=60, y=100)
+        ##https://nbcugmo.zen.zixi.com/#/clusters/dc-peacock-lx-x-01
+        ##Source1 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Device_Value)
+        ##Source1.place(x=60, y=100)
+    if str(Searched_Service_Row_Location_Zixi_Multicast_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XA_Value)
+        Source2.place(x=200, y=125)
+        ##Source15 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15.place(x=230, y=165)
+    if str(Searched_Service_Row_Location_Zixi_Multicast_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XB_Value)
+        Source2.place(x=200, y=355)
+        my_canvas.create_line(120, 120, 120, 400, fill='black')
+        my_canvas.create_line(120, 400, 350, 400, fill='black')
+        my_canvas.create_line(350, 400, 350, 125, fill='black', arrow=LAST)
+       ## Source14 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+       ## Source14.place(x=230, y=335)
+    if str(Searched_Service_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source3 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Device_Value, fg="blue",cursor="hand2")
+        Source3.bind("<Button-1>", lambda event: webbrowser.open(Searched_Service_Row_Location_Gateway_Device_Value))
+        Source3.place(x=300, y=100)
+    if str(Searched_Service_Row_Location_Zixi_Source_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XA_Value)
+        Source4.place(x=215, y=145)
+    if str(Searched_Service_Row_Location_Zixi_Source_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XB_Value)
+        Source4.place(x=215, y=370)
+    Source5 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Group_Service_Value)
+    Source5.place(x=285, y=80)
+    Source6 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Multicast_Value)
+    Source6.place(x=430, y=125)
+    Source7 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Device_Value, fg="blue", cursor="hand2")
+    Source7.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+    Source7.place(x=550, y=100)
+    Source19 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Output_Port_Value)
+    Source19.place(x=563, y=80)
+    Source8 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Multicast_Value)
+    Source8.place(x=685, y=125)
+    Source9 = Label(Standard_window, text=Column_Name_O, font=('Helvetica', 11, 'bold'))
+    Source9.place(x=85, y=80)
+    Source10 = Label(Standard_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+    Source10.place(x=310, y=60)
+    Source11 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source11.place(x=575, y=60)
+    Source12 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+    Source12.place(x=430, y=145)
+    Source13 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+    Source13.place(x=685, y=145)
+
+    my_canvas.create_line(40, 35, 40, 475, fill='black', dash=(3, 5))
+    my_canvas.create_line(40, 35, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 475, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 35, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 475, 40, 475, fill='black', dash=(3, 5))
+    Source88 = Label(Standard_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source88.place(x=42, y=37)
+    Source89 = Label(Standard_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+    Source89.place(x=800, y=95)
+
+    Source758 = Label(Standard_window, text=Searched_Service_Row_Location_Service_Name_Value,font=('Helvetica', 11, 'bold'))
+    Source758.place(x=850, y=550)
+    Source759 = Label(Standard_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=780, y=550)
+
+##Creating Signal Flow Box For Multicast Search
+def Standard_Peacock_Multicast_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value
+    global group_a_stream_rate_in
+    Standard_window = Tk()
+    Standard_window.title("FINDIT")
+    my_canvas = Canvas(Standard_window, width=1000, height=600, background='white')
+    my_canvas.create_line(100, 110, 300, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(300, 110, 550, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(550, 110, 800, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+
+    def Gateway_Pull_Current_Rate_A():
+        global Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value
+        global Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value
+        global Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value
+        global group_a_stream_rate_in
+        print(Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value)
+        print(Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value)
+        print(Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value)
+        group_1_stream_rate_list = []
+        tiii = []
+        tiii.append(Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value)
+
+        tii = []
+        tii.append(Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value)
+        user_input = []
+        user_input.append(Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value)
+
+        tii = Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value[0]
+        tii = int(tii)
+
+        tiii = Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value[0]
+        tiii = int(tiii)
+
+        user_input = Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value[0]
+
+        group_a_stream_rate = requests.get(f"{user_input}//htdocs/v.api/apis/EV/GET/parameters/981.{tiii}.{tii}")
+
+        group_a_stream_rate_return = group_a_stream_rate.json()
+
+        group_a_stream_rate_in = group_a_stream_rate_return['value']
+
+        Source2002 = Label(Standard_window, text=group_a_stream_rate_in, fg="blue", cursor="hand2")
+
+        Source2002.place(x=210, y=250)
+
+
+    if str(Searched_Multicast_Row_Location_Zixi_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Device_Value, fg="blue",
+                        cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open("https://nbcugmo.zen.zixi.com/#/clusters"))
+        Source1.place(x=60, y=100)
+        ##https://nbcugmo.zen.zixi.com/#/clusters/dc-peacock-lx-x-01
+        ##Source1 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Device_Value)
+        ##Source1.place(x=60, y=100)
+    if str(Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value)
+        Source2.place(x=200, y=125)
+        ##Source15 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15.place(x=230, y=165)
+    if str(Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value)
+        Source2.place(x=200, y=355)
+        my_canvas.create_line(120, 120, 120, 400, fill='black')
+        my_canvas.create_line(120, 400, 350, 400, fill='black')
+        my_canvas.create_line(350, 400, 350, 125, fill='black', arrow=LAST)
+    ## Source14 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+    ## Source14.place(x=230, y=335)
+    if str(Searched_Multicast_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source3 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Device_Value, fg="blue", cursor="hand2")
+        Source2001 = Button(Standard_window, text="Stream Rate In", fg="blue", cursor="hand2", command=Gateway_Pull_Current_Rate_A)
+        ##Source2002 = Label(Standard_window, text=group_1_stream_rate_in, fg="blue",cursor="hand2")
+        Source3.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+        Source3.place(x=300, y=100)
+        Source2001.place(x=200, y=220)
+
+        ##Source2002.place(x=300, y=300)
+    if str(Searched_Multicast_Row_Location_Zixi_Source_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XA_Value)
+        Source4.place(x=215, y=145)
+    if str(Searched_Multicast_Row_Location_Zixi_Source_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XB_Value)
+        Source4.place(x=215, y=370)
+    Source5 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value)
+    Source5.place(x=285, y=80)
+    Source6 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value)
+    Source6.place(x=430, y=125)
+    Source7 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Device_Value, fg="blue", cursor="hand2")
+    Source7.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+    Source7.place(x=550, y=100)
+    Source19 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Output_Port_Value)
+    Source19.place(x=563, y=80)
+    Source8 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Multicast_Value)
+    Source8.place(x=685, y=125)
+    Source9 = Label(Standard_window, text=Column_Name_O, font=('Helvetica', 11, 'bold'))
+    Source9.place(x=85, y=80)
+    Source10 = Label(Standard_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+    Source10.place(x=310, y=60)
+    Source11 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source11.place(x=575, y=60)
+    Source12 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+    Source12.place(x=430, y=145)
+    Source13 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+    Source13.place(x=685, y=145)
+
+    my_canvas.create_line(40, 35, 40, 475, fill='black', dash=(3, 5))
+    my_canvas.create_line(40, 35, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 475, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 35, 850, 35, fill='black', dash=(3, 5))
+    my_canvas.create_line(850, 475, 40, 475, fill='black', dash=(3, 5))
+    Source88 = Label(Standard_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source88.place(x=42, y=37)
+    Source89 = Label(Standard_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+    Source89.place(x=800, y=95)
+
+
+    Source758 = Label(Standard_window, text=Searched_Multicast_Row_Location_Service_Name_Value, font=('Helvetica', 11, 'bold'))
+    Source758.place(x=850, y=550)
+    Source759 = Label(Standard_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=780, y=550)
+
+
+
+
+def Standard_Stamford_Sports_Service_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value
+    global Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value
+    global Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value
+    Stamford_window = Tk()
+    Stamford_window.title("FINDIT")
+    my_canvas = Canvas(Stamford_window, width=1600, height=700, background='white')
+    ##my_canvas.create_line(100, 110, 400, 110, fill='black', arrow=LAST)
+    ##my_canvas.create_line(420, 110, 700, 110, fill='black', arrow=LAST)
+    ##my_canvas.create_line(750, 110, 1100, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+
+    if str(Searched_Service_Row_Location_Stamford_Y_Gateway_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Y_Gateway_Value)
+        ##Source1.place(x=100, y=227)
+        my_canvas.create_line(120, 230, 250, 230, fill='black')
+        my_canvas.create_line(250, 230, 250, 175, fill='black')
+        my_canvas.create_line(250, 175, 450, 175, fill='black', arrow=LAST)
+        my_canvas.create_line(120, 245, 250, 245, fill='black')
+        my_canvas.create_line(250, 245, 250, 380, fill='black')
+        my_canvas.create_line(250, 380, 450, 380, fill='black', arrow=LAST)
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Y_Gateway_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=100, y=227)
+        Source33 = Label(Stamford_window, text=Column_Name_BM, font=('Helvetica', 11, 'bold'))
+        Source33.place(x=80, y=204)
+
+    if str(Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value)
+        Source1.place(x=300, y=200)
+
+
+    if str(Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value)
+        Source1.place(x=300, y=220)
+
+
+    if str(Searched_Service_Row_Location_NAT_Card_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Card_Device_X_Value)
+        ##Source1.place(x=450, y=165)
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Card_Device_X_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=450, y=165)
+        my_canvas.create_line(460, 175, 700, 175, fill='black')
+        my_canvas.create_line(700, 175, 700, 230, fill='black')
+        my_canvas.create_line(700, 230, 800, 230, fill='black', arrow=LAST)
+        Source24 = Label(Stamford_window, text=Column_Name_T, font=('Helvetica', 11, 'bold'))
+        Source24.place(x=470, y=125)
+
+    if str(Searched_Service_Row_Location_NAT_Card_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Card_Device_Y_Value)
+        ##Source1.place(x=450, y=370)
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Card_Device_Y_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=450, y=370)
+        my_canvas.create_line(460, 380, 700, 380, fill='black')
+        my_canvas.create_line(700, 380, 700, 245, fill='black')
+        my_canvas.create_line(700, 245, 800, 245, fill='black', arrow=LAST)
+        Source24 = Label(Stamford_window, text=Column_Name_Z, font=('Helvetica', 11, 'bold'))
+        Source24.place(x=470, y=330)
+
+
+    if str(Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value)
+        Source1.place(x=300, y=320)
+
+    if str(Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value)
+        Source1.place(x=300, y=340)
+
+
+    if str(Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+        Source1.place(x=570, y=200)
+
+    if str(Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source1.place(x=580, y=220)
+
+    if str(Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+        Source1.place(x=570, y=320)
+
+    if str(Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source1.place(x=580, y=340)
+
+
+    if str(Searched_Service_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Device_Value)
+        ##Source1.place(x=800, y=227)
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=800, y=227)
+        my_canvas.create_line(850, 240, 1100, 240, fill='black', arrow=LAST)
+        Source10 = Label(Stamford_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+        Source10.place(x=815, y=185)
+        Source10 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Card_Group_Service_Value)
+        Source10.place(x=790, y=207)
+
+    if str(Searched_Service_Row_Location_Gateway_Card_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Card_Multicast_Value)
+        Source1.place(x=940, y=250)
+        Source1_2 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Card_Multicast_Value)
+        Source1_2.place(x=1220, y=250)
+
+    if str(Searched_Service_Row_Location_Gateway_Card_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+        Source1.place(x=940, y=270)
+        Source1_2 = Label(Stamford_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+        Source1_2.place(x=1220, y=270)
+
+
+
+    if str(Searched_Service_Row_Location_IPX_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_IPX_Device_Value)
+        ##Source1.place(x=1100, y=227)
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_IPX_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=1100, y=227)
+        Source11 = Label(Stamford_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+        Source11.place(x=1127, y=185)
+        Source800 = Label(Stamford_window, text=Searched_Service_Row_Location_IPX_Output_Port_Value)
+        Source800.place(x=1115, y=207)
+        my_canvas.create_line(1120, 240, 1400, 240, fill='black', arrow=LAST)
+        Source12 = Label(Stamford_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+        Source12.place(x=1400, y=228)
+
+
+    if str(Searched_Service_Row_Location_NAT_X_Core_Service_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_X_Core_Service_Value)
+        Source1.place(x=445, y=145)
+
+    if str(Searched_Service_Row_Location_NAT_Y_Core_Service_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Service_Row_Location_NAT_Y_Core_Service_Value)
+        Source1.place(x=445, y=350)
+
+    my_canvas.create_line(35, 80, 280, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(280, 80, 280, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(280, 400, 35, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(35, 400, 35, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 80, 1325, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(1325, 80, 1325, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 400, 1325, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 400, 425, 80, fill='black', dash=(3, 5))
+
+    Source101 = Label(Stamford_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source101.place(x=427, y=82)
+    Source101 = Label(Stamford_window, text="Stamford", font=('Helvetica', 11, 'bold'))
+    Source101.place(x=37, y=82)
+
+    Source758 = Label(Stamford_window, text=Searched_Service_Row_Location_Service_Name_Value,font=('Helvetica', 11, 'bold'))
+    Source758.place(x=1250, y=600)
+    Source759 = Label(Stamford_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=1180, y=600)
+
+def Standard_Stamford_Sports_Multicast_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value
+    global Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value
+    global Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value
+    global Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value
+    global Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value
+    global Searched_Multicast_Row_Location_Service_Name_Value
+    Stamford_window = Tk()
+    Stamford_window.title("FINDIT")
+    my_canvas = Canvas(Stamford_window, width=1600, height=700, background='white')
+    ##my_canvas.create_line(100, 110, 400, 110, fill='black', arrow=LAST)
+    ##my_canvas.create_line(420, 110, 700, 110, fill='black', arrow=LAST)
+    ##my_canvas.create_line(750, 110, 1100, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+
+    if str(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value)
+        ##Source1.place(x=100, y=227)
+        my_canvas.create_line(120, 230, 250, 230, fill='black')
+        my_canvas.create_line(250, 230, 250, 175, fill='black')
+        my_canvas.create_line(250, 175, 450, 175, fill='black', arrow=LAST)
+        my_canvas.create_line(120, 245, 250, 245, fill='black')
+        my_canvas.create_line(250, 245, 250, 380, fill='black')
+        my_canvas.create_line(250, 380, 450, 380, fill='black', arrow=LAST)
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=100, y=227)
+        Source33 = Label(Stamford_window, text=Column_Name_BM, font=('Helvetica', 11, 'bold'))
+        Source33.place(x=80, y=204)
+
+    if str(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value)
+        Source1.place(x=300, y=200)
+
+
+    if str(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value)
+        Source1.place(x=300, y=220)
+
+
+    if str(Searched_Multicast_Row_Location_NAT_Card_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_X_Value)
+        ##Source1.place(x=450, y=165)
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_X_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=450, y=165)
+        my_canvas.create_line(460, 175, 700, 175, fill='black')
+        my_canvas.create_line(700, 175, 700, 230, fill='black')
+        my_canvas.create_line(700, 230, 800, 230, fill='black', arrow=LAST)
+        Source24 = Label(Stamford_window, text=Column_Name_T, font=('Helvetica', 11, 'bold'))
+        Source24.place(x=470, y=125)
+
+    if str(Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value)
+        ##Source1.place(x=450, y=370)
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=450, y=370)
+        my_canvas.create_line(460, 380, 700, 380, fill='black')
+        my_canvas.create_line(700, 380, 700, 245, fill='black')
+        my_canvas.create_line(700, 245, 800, 245, fill='black', arrow=LAST)
+        Source24 = Label(Stamford_window, text=Column_Name_Z, font=('Helvetica', 11, 'bold'))
+        Source24.place(x=470, y=330)
+
+
+    if str(Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value)
+        Source1.place(x=300, y=320)
+
+    if str(Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value)
+        Source1.place(x=300, y=340)
+
+
+    if str(Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+        Source1.place(x=570, y=200)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source1.place(x=580, y=220)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+        Source1.place(x=570, y=320)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source1.place(x=580, y=340)
+
+
+    if str(Searched_Multicast_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Device_Value)
+        ##Source1.place(x=800, y=227)
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=800, y=227)
+        my_canvas.create_line(850, 240, 1100, 240, fill='black', arrow=LAST)
+        Source10 = Label(Stamford_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+        Source10.place(x=815, y=185)
+        Source10 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value)
+        Source10.place(x=790, y=207)
+
+
+    if str(Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value)
+        Source1.place(x=940, y=250)
+        Source1_2 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value)
+        Source1_2.place(x=1220, y=250)
+
+    if str(Searched_Multicast_Row_Location_Gateway_Card_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+        Source1.place(x=940, y=270)
+        Source1_2 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+        Source1_2.place(x=1220, y=270)
+
+
+
+    if str(Searched_Multicast_Row_Location_IPX_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        ##Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_IPX_Device_Value)
+        ##Source1.place(x=1100, y=227)
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_IPX_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open(text))
+        Source1.place(x=1100, y=227)
+        Source11 = Label(Stamford_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+        Source11.place(x=1127, y=185)
+        Source800 = Label(Stamford_window, text=Searched_Multicast_Row_Location_IPX_Output_Port_Value)
+        Source800.place(x=1115, y=207)
+        my_canvas.create_line(1120, 240, 1400, 240, fill='black', arrow=LAST)
+        Source12 = Label(Stamford_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+        Source12.place(x=1400, y=228)
+
+
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value)
+        Source1.place(x=445, y=145)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Stamford_window, text=Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value)
+        Source1.place(x=445, y=350)
+
+    my_canvas.create_line(35, 80, 280, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(280, 80, 280, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(280, 400, 35, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(35, 400, 35, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 80, 1325, 80, fill='black', dash=(3, 5))
+    my_canvas.create_line(1325, 80, 1325, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 400, 1325, 400, fill='black', dash=(3, 5))
+    my_canvas.create_line(425, 400, 425, 80, fill='black', dash=(3, 5))
+
+    Source101 = Label(Stamford_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source101.place(x=427, y=82)
+    Source101 = Label(Stamford_window, text="Stamford", font=('Helvetica', 11, 'bold'))
+    Source101.place(x=37, y=82)
+
+    Source758 = Label(Stamford_window, text=Searched_Multicast_Row_Location_Service_Name_Value,font=('Helvetica', 11, 'bold'))
+    Source758.place(x=1250, y=600)
+    Source759 = Label(Stamford_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=1180, y=600)
+
+def Standard_HUB_LX_Service_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value
+    global Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value
+    global Searched_Service_Row_Location_HUB_DCM_Xa_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Xb_Source_Value
+
+    Standard_window = Tk()
+    Standard_window.title("FINDIT")
+    my_canvas = Canvas(Standard_window, width=1700, height=1000, background='white')
+    my_canvas.create_line(100, 110, 400, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(420, 110, 700, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(750, 110, 1100, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+    if str(Searched_Service_Row_Location_Zixi_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Device_Value, fg="blue",cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open("https://nbcugmo.zen.zixi.com/#/clusters"))
+        Source1.place(x=60, y=100)
+
+    if str(Searched_Service_Row_Location_Zixi_Multicast_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XA_Value)
+        Source2_2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XA_Value)
+        Source2.place(x=250, y=125)
+        Source2_2.place(x=250, y=380)
+        ##Source15 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15_2 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15.place(x=230, y=163)
+        ##Source15_2.place(x=210, y=360)
+    if str(Searched_Service_Row_Location_Zixi_Multicast_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XB_Value)
+        Source2_2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Multicast_XB_Value)
+        Source2.place(x=250, y=300)
+        Source2_2.place(x=250, y=505)
+       ## my_canvas.create_line(120, 120, 120, 350, fill='black')
+        my_canvas.create_line(120, 350, 460, 350, fill='black')
+        my_canvas.create_line(460, 350, 460, 120, fill='black', arrow=LAST)
+        ##Source14 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+        ##Source14_2 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+        ##Source14.place(x=230, y=280)
+        ##Source14_2.place(x=210, y=485)
+    if str(Searched_Service_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source3 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Device_Value, fg="blue",cursor="hand2")
+        Source3.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+        Source3.place(x=400, y=100)
+    if str(Searched_Service_Row_Location_Zixi_Source_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XA_Value)
+        Source4.place(x=250, y=145)
+        Source4_2 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XA_Value)
+        Source4_2.place(x=250, y=400)
+    if str(Searched_Service_Row_Location_Zixi_Source_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XB_Value)
+        Source4.place(x=250, y=320)
+        Source4_3 = Label(Standard_window, text=Searched_Service_Row_Location_Zixi_Source_XB_Value)
+        Source4_3.place(x=250, y=525)
+
+    if str(Searched_Service_Row_Location_NAT_Card_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source29 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Card_Device_X_Value, fg="blue",cursor="hand2")
+        Source29.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source29.place(x=400, y=430)
+       ## Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Card_Device_X_Value)
+    ##    Source20.place(x=400, y=430)
+        my_canvas.create_line(120, 120, 120, 440, fill='black')
+        my_canvas.create_line(120, 440, 400, 440, fill='black', arrow=LAST)
+
+    if str(Searched_Service_Row_Location_NAT_Card_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source55 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Card_Device_Y_Value, fg="blue",cursor="hand2")
+        Source55.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source55.place(x=400, y=560)
+      ##  Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Card_Device_Y_Value)
+        ##Source20.place(x=400, y=560)
+        my_canvas.create_line(120, 120, 120, 570, fill='black')
+        my_canvas.create_line(120, 570, 400, 570, fill='black', arrow=LAST)
+
+    if str(Searched_Service_Row_Location_HUB_DCM_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source56 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Device_X_Value, fg="blue",cursor="hand2")
+        Source56.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source56.place(x=850, y=430)
+       ## Source20 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Device_X_Value)
+       ## Source20.place(x=700, y=430)
+        ##my_canvas.create_line(375, 440, 500, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(500, 440, 850, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(860, 440, 1100, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(1060, 440, 1060, 715, fill='black')
+        my_canvas.create_line(1060, 715, 1100, 715, fill='black', arrow=LAST)
+
+
+    if str(Searched_Service_Row_Location_HUB_DCM_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source57 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Device_Y_Value, fg="blue", cursor="hand2")
+        Source57.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source57.place(x=850, y=560)
+       ## Source20 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Device_Y_Value)
+       ## Source20.place(x=700, y=560)
+        my_canvas.create_line(375, 570, 500, 570, fill='black')
+        my_canvas.create_line(500, 570, 850, 570, fill='black', arrow=LAST)
+        my_canvas.create_line(860, 570, 1100, 570, fill='black', arrow=LAST)
+        my_canvas.create_line(955, 570, 955, 810, fill='black')
+        my_canvas.create_line(955, 810, 1100, 810, fill='black', arrow=LAST)
+
+    if str(Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value)
+        Source20.place(x=60, y=700)
+        my_canvas.create_line(60, 710, 360, 710, fill='black')
+        my_canvas.create_line(360, 710, 360, 440, fill='black')
+        my_canvas.create_line(360, 440, 395, 440, fill='black')
+
+
+    if str(Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value)
+        Source20.place(x=60, y=850)
+        my_canvas.create_line(60, 865, 445, 865, fill='black')
+        my_canvas.create_line(445, 865, 445, 580, fill='black', arrow=LAST)
+
+
+
+    if str(Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value)
+        Source20.place(x=235, y=650)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+       ## my_canvas.create_line(445, 865, 445, 580, fill='black')
+
+    if str(Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value)
+        Source20.place(x=235, y=820)
+        my_canvas.create_line(60, 865, 445, 865, fill='black')
+        my_canvas.create_line(445, 865, 445, 580, fill='black')
+
+
+    if str(Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value)
+        Source20.place(x=240, y=670)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value)
+        Source20.place(x=240, y=840)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=395)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+
+    if str(Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=450)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+
+    if str(Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=520)
+
+    if str(Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=580)
+
+    if str(Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source20_4 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source20.place(x=625, y=415)
+        Source20_4.place(x=625, y=465)
+
+    if str(Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source20_4 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source20.place(x=625, y=540)
+        Source20_4.place(x=625, y=600)
+
+    if str(Searched_Service_Row_Location_NAT_X_Core_Service_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source59 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_Core_Service_Value)
+        Source59.place(x=400, y=390)
+
+
+    if str(Searched_Service_Row_Location_NAT_X_Core_Service_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source60 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_Core_Service_Value)
+        Source60.place(x=400, y=520)
+
+    if str(Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value)
+        Source68.place(x=400, y=410)
+        Source69 = Label(Standard_window, text="US WEST")
+        Source69.place(x=345, y=390)
+        Source69_2 = Label(Standard_window, text="US WEST")
+        Source69_2.place(x=345, y=520)
+        Source70 = Label(Standard_window, text="US EAST")
+        Source70.place(x=345, y=410)
+        Source70_2 = Label(Standard_window, text="US EAST")
+        Source70_2.place(x=345, y=540)
+
+    if str(Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value)
+        Source68.place(x=400, y=540)
+
+
+   ## global Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value
+   ## global Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value
+
+    if str(Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value)
+        Source68.place(x=970, y=455)
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Xa_Source_Value)
+        Source68.place(x=965, y=475)
+
+    if str(Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value)
+        Source68.place(x=970, y=580)
+        Source900 = Label(Standard_window, text=Searched_Service_Row_Location_HUB_DCM_Ya_Source_Value)
+        Source900.place(x=965, y=600)
+
+
+    if str(Searched_Service_Row_Location_TVE_DCM_X_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_X_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1110, y=700)
+        my_canvas.create_line(1120, 710, 1350, 710, fill='black')
+
+
+    if str(Searched_Service_Row_Location_TVE_DCM_Y_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_Y_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1110, y=800)
+        my_canvas.create_line(1120, 810, 1350, 810, fill='black')
+
+
+
+    if str(Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value)
+        Source68.place(x=1240, y=730)
+        Source70 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value)
+        Source70.place(x=1470, y=730)
+
+    if str(Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value)
+        Source68.place(x=1240, y=830)
+        Source70 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value)
+        Source70.place(x=1470, y=830)
+
+    if str(Searched_Service_Row_Location_TVE_DCM_X_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_X_Source_Value)
+        Source68.place(x=1240, y=750)
+        Source70 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_X_Source_Value)
+        Source70.place(x=1470, y=750)
+
+    if str(Searched_Service_Row_Location_TVE_DCM_Y_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_Y_Source_Value)
+        Source68.place(x=1240, y=850)
+        Source70 = Label(Standard_window, text=Searched_Service_Row_Location_TVE_DCM_Y_Source_Value)
+        Source70.place(x=1470, y=850)
+
+    if str(Searched_Service_Row_Location_IPX_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1350, y=700)
+        my_canvas.create_line(1350, 710, 1600, 710, fill='black')
+
+    if str(Searched_Service_Row_Location_IPX_Y_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Y_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1350, y=800)
+        my_canvas.create_line(1350, 810, 1600, 810, fill='black')
+
+
+    Source70 = Label(Standard_window, text="US East")
+    Source70.place(x=550, y=405)
+    Source70_2 = Label(Standard_window, text="US East")
+    Source70_2.place(x=550, y=530)
+
+    Source71 = Label(Standard_window, text="US West")
+    Source71.place(x=550, y=460)
+    Source71_2 = Label(Standard_window, text="US West")
+    Source71_2.place(x=550, y=590)
+
+    Source79 = Label(Standard_window, text="MVPDs",  font=('Helvetica', 11, 'bold'))
+    Source79.place(x=1610, y=800)
+    Source79_2 = Label(Standard_window, text="MVPDs", font=('Helvetica', 11, 'bold'))
+    Source79_2.place(x=1610, y=700)
+
+    my_canvas.create_line(15, 900, 420, 900, fill='black', dash=(3,5))
+    my_canvas.create_line(420, 900, 420, 615, fill='black', dash=(3, 5))
+    my_canvas.create_line(420, 615, 15, 615, fill='black', dash=(3, 5))
+    my_canvas.create_line(15, 615, 15, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(50, 45, 50, 600, fill='black', dash=(3, 5))
+    my_canvas.create_line(50, 45, 1080, 45, fill='black', dash=(3, 5))
+    my_canvas.create_line(1080, 45, 1080, 670, fill='black', dash=(3, 5))
+    my_canvas.create_line(1080, 670, 1450, 670, fill='black', dash=(3, 5))
+    my_canvas.create_line(1450, 670, 1450, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(1450, 900, 900, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(900, 900, 900, 650, fill='black', dash=(3, 5))
+    my_canvas.create_line(900, 650, 530, 650, fill='black', dash=(3, 5))
+    my_canvas.create_line(530, 650, 530, 600, fill='black', dash=(3, 5))
+    my_canvas.create_line(530, 600, 50, 600, fill='black', dash=(3, 5))
+
+
+
+    Source5 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Group_Service_Value)
+    Source5.place(x=385, y=80)
+    Source6 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Multicast_Value)
+    Source6.place(x=530, y=125)
+    Source7 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Device_Value, fg="blue", cursor="hand2")
+    Source7.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+    Source7.place(x=700, y=100)
+    Source19 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Output_Port_Value)
+    Source19.place(x=710, y=80)
+    Source8 = Label(Standard_window, text=Searched_Service_Row_Location_IPX_Multicast_Value)
+    Source8.place(x=850, y=125)
+    Source9 = Label(Standard_window, text=Column_Name_O, font=('Helvetica', 11, 'bold'))
+    Source9.place(x=85, y=80)
+    Source10 = Label(Standard_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+    Source10.place(x=410, y=60)
+    Source23 = Label(Standard_window, text=Column_Name_T, font=('Helvetica', 11, 'bold'))
+    Source23.place(x=425, y=370)
+    Source24 = Label(Standard_window, text=Column_Name_Z, font=('Helvetica', 11, 'bold'))
+    Source24.place(x=425, y=500)
+    Source11 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source11.place(x=720, y=60)
+    Source400 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source400.place(x=1370, y=680)
+    Source30 = Label(Standard_window, text=Column_Name_AM, font=('Helvetica', 11, 'bold'))
+    Source30.place(x=850, y=410)
+    Source40 = Label(Standard_window, text=Column_Name_AQ, font=('Helvetica', 11, 'bold'))
+    Source40.place(x=850, y=540)
+    Source41 = Label(Standard_window, text=Column_Name_BA, font=('Helvetica', 11, 'bold'))
+    Source41.place(x=45, y=680)
+    Source42 = Label(Standard_window, text=Column_Name_BD, font=('Helvetica', 11, 'bold'))
+    Source42.place(x=45, y=830)
+    Source700 = Label(Standard_window, text=Column_Name_BR, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1100, y=680)
+    Source700 = Label(Standard_window, text=Column_Name_BU, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1100, y=780)
+    Source700 = Label(Standard_window, text=Column_Name_BX, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1370, y=780)
+    Source12 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+    Source12.place(x=530, y=145)
+    Source13 = Label(Standard_window, text=Searched_Service_Row_Location_Gateway_Card_Source_Value)
+    Source13.place(x=850, y=145)
+    Source90 = Label(Standard_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source90.place(x=55, y=50)
+    Source91 = Label(Standard_window, text="EC", font=('Helvetica', 11, 'bold'))
+    Source91.place(x=20, y=620)
+    Source92 = Label(Standard_window, text="SPOKE X DCM", font=('Helvetica', 11, 'bold'))
+    Source92.place(x=1110, y=425)
+    Source93 = Label(Standard_window, text="SPOKE Y DCM", font=('Helvetica', 11, 'bold'))
+    Source93.place(x=1110, y=555)
+    Source94 = Label(Standard_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+    Source94.place(x=1110, y=98)
+
+    Source758 = Label(Standard_window, text=Searched_Service_Row_Location_Service_Name_Value,font=('Helvetica', 11, 'bold'))
+    Source758.place(x=1450, y=950)
+    Source759 = Label(Standard_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=1380, y=950)
+    
+def Standard_HUB_LX_Multicast_Search():
+    global Source1
+    global My_Service_List
+    global Test
+    global column2
+    global Searched_Service_Row_Location_Device
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Service_Row_Location_B
+    global Column_Name_O
+    global Column_Name_AF
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value
+    global Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Xa_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Xb_Source_Value
+
+    Standard_window = Tk()
+    Standard_window.title("FINDIT")
+    my_canvas = Canvas(Standard_window, width=1700, height=1000, background='white')
+    my_canvas.create_line(100, 110, 400, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(420, 110, 700, 110, fill='black', arrow=LAST)
+    my_canvas.create_line(750, 110, 1100, 110, fill='black', arrow=LAST)
+    my_canvas.grid(row=3, column=2)
+    if str(Searched_Multicast_Row_Location_Zixi_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source1 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Device_Value, fg="blue",
+                        cursor="hand2")
+        Source1.bind("<Button-1>", lambda event: webbrowser.open("https://nbcugmo.zen.zixi.com/#/clusters"))
+        Source1.place(x=60, y=100)
+
+    if str(Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value)
+        Source2_2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value)
+        Source2.place(x=250, y=125)
+        Source2_2.place(x=250, y=380)
+        ##Source15 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15_2 = Label(Standard_window, text="XA", font=('Helvetica', 11, 'bold'))
+        ##Source15.place(x=230, y=163)
+        ##Source15_2.place(x=210, y=360)
+    if str(Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value)
+        Source2_2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value)
+        Source2.place(x=250, y=300)
+        Source2_2.place(x=250, y=505)
+        ## my_canvas.create_line(120, 120, 120, 350, fill='black')
+        my_canvas.create_line(120, 350, 460, 350, fill='black')
+        my_canvas.create_line(460, 350, 460, 120, fill='black', arrow=LAST)
+        ##Source14 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+        ##Source14_2 = Label(Standard_window, text="XB", font=('Helvetica', 11, 'bold'))
+        ##Source14.place(x=230, y=280)
+        ##Source14_2.place(x=210, y=485)
+    if str(Searched_Multicast_Row_Location_Gateway_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source3 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Device_Value, fg="blue",
+                        cursor="hand2")
+        Source3.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+        Source3.place(x=400, y=100)
+    if str(Searched_Multicast_Row_Location_Zixi_Source_XA_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XA_Value)
+        Source4.place(x=250, y=145)
+        Source4_2 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XA_Value)
+        Source4_2.place(x=250, y=400)
+    if str(Searched_Multicast_Row_Location_Zixi_Source_XB_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source4 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XB_Value)
+        Source4.place(x=250, y=320)
+        Source4_3 = Label(Standard_window, text=Searched_Multicast_Row_Location_Zixi_Source_XB_Value)
+        Source4_3.place(x=250, y=525)
+
+    if str(Searched_Multicast_Row_Location_NAT_Card_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source29 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_X_Value, fg="blue",
+                         cursor="hand2")
+        Source29.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source29.place(x=400, y=430)
+        ## Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_X_Value)
+        ##    Source20.place(x=400, y=430)
+        my_canvas.create_line(120, 120, 120, 440, fill='black')
+        my_canvas.create_line(120, 440, 400, 440, fill='black', arrow=LAST)
+
+    if str(Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source55 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value, fg="blue",
+                         cursor="hand2")
+        Source55.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source55.place(x=400, y=560)
+        ##  Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value)
+        ##Source20.place(x=400, y=560)
+        my_canvas.create_line(120, 120, 120, 570, fill='black')
+        my_canvas.create_line(120, 570, 400, 570, fill='black', arrow=LAST)
+
+    if str(Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source56 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value, fg="blue",
+                         cursor="hand2")
+        Source56.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source56.place(x=850, y=430)
+        ## Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value)
+        ## Source20.place(x=700, y=430)
+        ##my_canvas.create_line(375, 440, 500, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(500, 440, 850, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(860, 440, 1100, 440, fill='black', arrow=LAST)
+        my_canvas.create_line(1060, 440, 1060, 715, fill='black')
+        my_canvas.create_line(1060, 715, 1100, 715, fill='black', arrow=LAST)
+
+    if str(Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source57 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value, fg="blue",
+                         cursor="hand2")
+        Source57.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source57.place(x=850, y=560)
+        ## Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value)
+        ## Source20.place(x=700, y=560)
+        my_canvas.create_line(375, 570, 500, 570, fill='black')
+        my_canvas.create_line(500, 570, 850, 570, fill='black', arrow=LAST)
+        my_canvas.create_line(860, 570, 1100, 570, fill='black', arrow=LAST)
+        my_canvas.create_line(955, 570, 955, 810, fill='black')
+        my_canvas.create_line(955, 810, 1100, 810, fill='black', arrow=LAST)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value)
+        Source20.place(x=60, y=700)
+        my_canvas.create_line(60, 710, 360, 710, fill='black')
+        my_canvas.create_line(360, 710, 360, 440, fill='black')
+        my_canvas.create_line(360, 440, 395, 440, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value)
+        Source20.place(x=60, y=850)
+        my_canvas.create_line(60, 865, 445, 865, fill='black')
+        my_canvas.create_line(445, 865, 445, 580, fill='black', arrow=LAST)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value)
+        Source20.place(x=235, y=650)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+    ## my_canvas.create_line(445, 865, 445, 580, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value)
+        Source20.place(x=235, y=820)
+        my_canvas.create_line(60, 865, 445, 865, fill='black')
+        my_canvas.create_line(445, 865, 445, 580, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value)
+        Source20.place(x=240, y=670)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value)
+        Source20.place(x=240, y=840)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=395)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=450)
+        ##my_canvas.create_line(60, 865, 445, 865, fill='black')
+        ##my_canvas.create_line(445, 865, 445, 500, fill='black')
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=520)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value)
+        Source20.place(x=625, y=580)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source20_4 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value)
+        Source20.place(x=625, y=415)
+        Source20_4.place(x=625, y=465)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source20 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source20_4 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value)
+        Source20.place(x=625, y=540)
+        Source20_4.place(x=625, y=600)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source59 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value)
+        Source59.place(x=400, y=390)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source60 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value)
+        Source60.place(x=400, y=520)
+
+    if str(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value)
+        Source68.place(x=400, y=410)
+        Source69 = Label(Standard_window, text="US WEST")
+        Source69.place(x=345, y=390)
+        Source69_2 = Label(Standard_window, text="US WEST")
+        Source69_2.place(x=345, y=520)
+        Source70 = Label(Standard_window, text="US EAST")
+        Source70.place(x=345, y=410)
+        Source70_2 = Label(Standard_window, text="US EAST")
+        Source70_2.place(x=345, y=540)
+
+    if str(Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value)
+        Source68.place(x=400, y=540)
+
+    ## global Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value
+    ## global Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value
+
+    if str(Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value)
+        Source68.place(x=970, y=455)
+        Source900 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Xa_Source_Value)
+        Source900.place(x=965, y=475)
+
+    if str(Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value)
+        Source68.place(x=970, y=580)
+        Source901 = Label(Standard_window, text=Searched_Multicast_Row_Location_HUB_DCM_Ya_Source_Value)
+        Source901.place(x=965, y=600)
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_X_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_X_Device_Value, fg="blue",
+                         cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1110, y=700)
+        my_canvas.create_line(1120, 710, 1350, 710, fill='black')
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_Y_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_Y_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1110, y=800)
+        my_canvas.create_line(1120, 810, 1350, 810, fill='black')
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value)
+        Source68.place(x=1240, y=730)
+        Source70 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value)
+        Source70.place(x=1470, y=730)
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value)
+        Source68.place(x=1240, y=830)
+        Source70 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value)
+        Source70.place(x=1470, y=830)
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value)
+        Source68.place(x=1240, y=750)
+        Source70 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value)
+        Source70.place(x=1470, y=750)
+
+    if str(Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value)
+        Source68.place(x=1240, y=850)
+        Source70 = Label(Standard_window, text=Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value)
+        Source70.place(x=1470, y=850)
+
+    if str(Searched_Multicast_Row_Location_IPX_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1350, y=700)
+        my_canvas.create_line(1350, 710, 1600, 710, fill='black')
+
+    if str(Searched_Multicast_Row_Location_IPX_Y_Device_Value) in (None, "[nan]"):
+        pass
+    else:
+        Source68 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Y_Device_Value, fg="blue",cursor="hand2")
+        Source68.bind("<Button-1>", lambda event: webbrowser.open(Source29.cget("text")))
+        Source68.place(x=1350, y=800)
+        my_canvas.create_line(1350, 810, 1600, 810, fill='black')
+
+    Source70 = Label(Standard_window, text="US East")
+    Source70.place(x=550, y=405)
+    Source70_2 = Label(Standard_window, text="US East")
+    Source70_2.place(x=550, y=530)
+
+    Source71 = Label(Standard_window, text="US West")
+    Source71.place(x=550, y=460)
+    Source71_2 = Label(Standard_window, text="US West")
+    Source71_2.place(x=550, y=590)
+
+    Source79 = Label(Standard_window, text="MVPDs", font=('Helvetica', 11, 'bold'))
+    Source79.place(x=1610, y=800)
+    Source79_2 = Label(Standard_window, text="MVPDs", font=('Helvetica', 11, 'bold'))
+    Source79_2.place(x=1610, y=700)
+
+    my_canvas.create_line(15, 900, 420, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(420, 900, 420, 615, fill='black', dash=(3, 5))
+    my_canvas.create_line(420, 615, 15, 615, fill='black', dash=(3, 5))
+    my_canvas.create_line(15, 615, 15, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(50, 45, 50, 600, fill='black', dash=(3, 5))
+    my_canvas.create_line(50, 45, 1080, 45, fill='black', dash=(3, 5))
+    my_canvas.create_line(1080, 45, 1080, 670, fill='black', dash=(3, 5))
+    my_canvas.create_line(1080, 670, 1450, 670, fill='black', dash=(3, 5))
+    my_canvas.create_line(1450, 670, 1450, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(1450, 900, 900, 900, fill='black', dash=(3, 5))
+    my_canvas.create_line(900, 900, 900, 650, fill='black', dash=(3, 5))
+    my_canvas.create_line(900, 650, 530, 650, fill='black', dash=(3, 5))
+    my_canvas.create_line(530, 650, 530, 600, fill='black', dash=(3, 5))
+    my_canvas.create_line(530, 600, 50, 600, fill='black', dash=(3, 5))
+
+    Source5 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value)
+    Source5.place(x=385, y=80)
+    Source6 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value)
+    Source6.place(x=530, y=125)
+    Source7 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Device_Value, fg="blue", cursor="hand2")
+    Source7.bind("<Button-1>", lambda event: webbrowser.open(Source3.cget("text")))
+    Source7.place(x=700, y=100)
+    Source19 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Output_Port_Value)
+    Source19.place(x=710, y=80)
+    Source8 = Label(Standard_window, text=Searched_Multicast_Row_Location_IPX_Multicast_Value)
+    Source8.place(x=850, y=125)
+    Source9 = Label(Standard_window, text=Column_Name_O, font=('Helvetica', 11, 'bold'))
+    Source9.place(x=85, y=80)
+    Source10 = Label(Standard_window, text=Column_Name_AF, font=('Helvetica', 11, 'bold'))
+    Source10.place(x=410, y=60)
+    Source23 = Label(Standard_window, text=Column_Name_T, font=('Helvetica', 11, 'bold'))
+    Source23.place(x=425, y=370)
+    Source24 = Label(Standard_window, text=Column_Name_Z, font=('Helvetica', 11, 'bold'))
+    Source24.place(x=425, y=500)
+    Source11 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source11.place(x=720, y=60)
+    Source400 = Label(Standard_window, text=Column_Name_AJ, font=('Helvetica', 11, 'bold'))
+    Source400.place(x=1370, y=680)
+    Source30 = Label(Standard_window, text=Column_Name_AM, font=('Helvetica', 11, 'bold'))
+    Source30.place(x=850, y=410)
+    Source40 = Label(Standard_window, text=Column_Name_AQ, font=('Helvetica', 11, 'bold'))
+    Source40.place(x=850, y=540)
+    Source41 = Label(Standard_window, text=Column_Name_BA, font=('Helvetica', 11, 'bold'))
+    Source41.place(x=45, y=680)
+    Source42 = Label(Standard_window, text=Column_Name_BD, font=('Helvetica', 11, 'bold'))
+    Source42.place(x=45, y=830)
+    Source700 = Label(Standard_window, text=Column_Name_BR, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1100, y=680)
+    Source700 = Label(Standard_window, text=Column_Name_BU, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1100, y=780)
+    Source700 = Label(Standard_window, text=Column_Name_BX, font=('Helvetica', 11, 'bold'))
+    Source700.place(x=1370, y=780)
+    Source12 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+    Source12.place(x=530, y=145)
+    Source13 = Label(Standard_window, text=Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+    Source13.place(x=850, y=145)
+    Source90 = Label(Standard_window, text="Drycreek", font=('Helvetica', 11, 'bold'))
+    Source90.place(x=55, y=50)
+    Source91 = Label(Standard_window, text="EC", font=('Helvetica', 11, 'bold'))
+    Source91.place(x=20, y=620)
+    Source92 = Label(Standard_window, text="SPOKE X DCM", font=('Helvetica', 11, 'bold'))
+    Source92.place(x=1110, y=425)
+    Source93 = Label(Standard_window, text="SPOKE Y DCM", font=('Helvetica', 11, 'bold'))
+    Source93.place(x=1110, y=555)
+    Source94 = Label(Standard_window, text="ISTREAM PLANET", font=('Helvetica', 11, 'bold'))
+    Source94.place(x=1110, y=98)
+
+    Source758 = Label(Standard_window, text=Searched_Multicast_Row_Location_Service_Name_Value,font=('Helvetica', 11, 'bold'))
+    Source758.place(x=1450, y=950)
+    Source759 = Label(Standard_window, text="Service:", font=('Helvetica', 11, 'bold'))
+    Source759.place(x=1380, y=950)
+
+
+##Creating Function For Multicast IP Search
+def Multicast_Search():
+    global Searched_Service_Row_Location_B
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_XA_Value
+    global Searched_Service_Row_Location_Zixi_Source_XB_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global My_Multicast_List
+    global My_Multicast_List2
+    global My_Multicast_List3
+    global Searched_Multicast_Row_Location_B
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Multicast_Row_Location_Gateway_Device_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_XA_Value
+    global Searched_Multicast_Row_Location_Zixi_Source_XB_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Multicast_Row_Location_IPX_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Output_Port_Value
+    global Searched_Multicast_Row_Location_IPX_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Source_Value
+    global Searched_Multicast_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value
+    global Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value
+    global Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value
+    global Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value
+    global Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value
+    global Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value
+    global Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Multicast_Row_Location_Service_Name_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Xa_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Xb_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Ya_Source_Value
+    global Searched_Multicast_Row_Location_HUB_DCM_Yb_Source_Value
+    global Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value
+    global Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value
+    global Searched_Multicast_Row_Location_TVE_DCM_X_Device_Value
+    global Searched_Multicast_Row_Location_TVE_DCM_Y_Device_Value
+    global Searched_Multicast_Row_Location_IPX_Y_Device
+    global Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value
+    global Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value
+    global Searched_Multicast_Row_Location_IPX_Y_Device_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value
+    global Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value
+    hello = "Searching " + Group.get()
+    myLabel = Label(root, text=hello)
+    myLabel.grid(row=0, column=6)
+
+    ##Indexing the location of the searched service to get Row#
+    Searched_Multicast_Row_Location = excel_data_df_Sheet_1[excel_data_df_Sheet_1['Zixi Multicast XA'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Gateway Card Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['IPX Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Stamford Ya Gateway Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Stamford Yb Gateway Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Dry Creek TVE Encoder Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Dry Creek Contribution Encoder Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['10G WAN DCM Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['MUX Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Zixi Multicast XB'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['X NAT US West Card Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['X NAT US East Card Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['Y NAT US West Card Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['HUB DCM X Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['HUB DCM Y Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['SPOKE DCM X Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['SPOKE DCM Y Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['NAT X EC CARD Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['NAT Y EC CARD Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['NAT X EAST CARD Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['NAT Y EAST CARD Multicast'] == Group.get()].index | excel_data_df_Sheet_1[excel_data_df_Sheet_1['NAT Y EAST CARD Multicast'] == Group.get()].index
+    print(Searched_Multicast_Row_Location)
+    ##Grabbing the cell value from that indexed row and specific column, in this case pulling the value of indexed cell and column "Zixi MGMT"
+    Searched_Multicast_Row_Location_Zixi_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Zixi Device"])
+    Searched_Multicast_Row_Location_Zixi_Device_Value = (Searched_Multicast_Row_Location_Zixi_Device.values)
+    print(Searched_Multicast_Row_Location_Zixi_Device_Value)
+    Searched_Multicast_Row_Location_Zixi_Multicast_XA = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Zixi Multicast XA"])
+    Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value = (Searched_Multicast_Row_Location_Zixi_Multicast_XA.values)
+    print(Searched_Multicast_Row_Location_Zixi_Multicast_XA_Value)
+    Searched_Multicast_Row_Location_Zixi_Multicast_XB = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Zixi Multicast XB"])
+    Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value = (Searched_Multicast_Row_Location_Zixi_Multicast_XB.values)
+    print(Searched_Multicast_Row_Location_Zixi_Multicast_XB_Value)
+    Searched_Multicast_Row_Location_Gateway_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Gateway"])
+    Searched_Multicast_Row_Location_Gateway_Device_Value = (Searched_Multicast_Row_Location_Gateway_Device.values)
+    print(Searched_Multicast_Row_Location_Gateway_Device_Value)
+    Searched_Multicast_Row_Location_Zixi_Source_XA = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Zixi Source XA"])
+    Searched_Multicast_Row_Location_Zixi_Source_XA_Value = (Searched_Multicast_Row_Location_Zixi_Source_XA.values)
+    print(Searched_Multicast_Row_Location_Zixi_Source_XA_Value)
+    Searched_Multicast_Row_Location_Zixi_Source_XB = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Zixi Source XB"])
+    Searched_Multicast_Row_Location_Zixi_Source_XB_Value = (Searched_Multicast_Row_Location_Zixi_Source_XB.values)
+    print(Searched_Multicast_Row_Location_Zixi_Source_XB_Value)
+    Searched_Multicast_Row_Location_Gateway_Card_Group_Service = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Gateway Card Group/Service"])
+    Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value = (Searched_Multicast_Row_Location_Gateway_Card_Group_Service.values)
+    print(Searched_Multicast_Row_Location_Gateway_Card_Group_Service_Value)
+    Searched_Multicast_Row_Location_Gateway_Card_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Gateway Card Multicast"])
+    Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value = (Searched_Multicast_Row_Location_Gateway_Card_Multicast.values)
+    print(Searched_Multicast_Row_Location_Gateway_Card_Multicast_Value)
+    Searched_Multicast_Row_Location_IPX_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["IPX X"])
+    Searched_Multicast_Row_Location_IPX_Device_Value = (Searched_Multicast_Row_Location_IPX_Device.values)
+    print(Searched_Multicast_Row_Location_IPX_Device_Value)
+    Searched_Multicast_Row_Location_IPX_Output_Port = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["IPX Output Port"])
+    Searched_Multicast_Row_Location_IPX_Output_Port_Value = (Searched_Multicast_Row_Location_IPX_Output_Port.values)
+    print(Searched_Multicast_Row_Location_IPX_Output_Port_Value)
+    Searched_Multicast_Row_Location_IPX_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["IPX Multicast"])
+    Searched_Multicast_Row_Location_IPX_Multicast_Value = (Searched_Multicast_Row_Location_IPX_Multicast.values)
+    print(Searched_Multicast_Row_Location_IPX_Multicast_Value)
+    Searched_Multicast_Row_Location_Gateway_Card_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Gateway Card Source"])
+    Searched_Multicast_Row_Location_Gateway_Card_Source_Value = (Searched_Multicast_Row_Location_Gateway_Card_Source.values)
+    print(Searched_Multicast_Row_Location_Gateway_Card_Source_Value)
+    Searched_Multicast_Row_Location_NAT_Card_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X"])
+    Searched_Multicast_Row_Location_NAT_Card_Device_X_Value = (Searched_Multicast_Row_Location_NAT_Card_Device_X.values)
+    print(Searched_Multicast_Row_Location_NAT_Card_Device_X_Value)
+    Searched_Multicast_Row_Location_NAT_Card_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y"])
+    Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value = (Searched_Multicast_Row_Location_NAT_Card_Device_Y.values)
+    print(Searched_Multicast_Row_Location_NAT_Card_Device_Y_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM X"])
+    Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value = (Searched_Multicast_Row_Location_HUB_DCM_Device_X.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Device_X_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM Y"])
+    Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value = (Searched_Multicast_Row_Location_HUB_DCM_Device_Y.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Device_Y_Value)
+    Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X EC CARD"])
+    Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value = (Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X.values)
+    print(Searched_Multicast_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value)
+    Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y EC CARD"])
+    Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value = (Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value)
+    Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X EC CARD Multicast"])
+    Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value = (Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X.values)
+    print(Searched_Multicast_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value)
+    Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y EC CARD Multicast"])
+    Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value = (Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value)
+    Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X EC CARD Source"])
+    Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value = (Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X.values)
+    print(Searched_Multicast_Row_Location_NAT_X_EC_Card_Source_Device_X_Value)
+    Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y EC CARD Source"])
+    Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value = (Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value)
+    Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["X NAT US West Card Multicast"])
+    Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value = (Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+    Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["X NAT US East Card Multicast"])
+    Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value = (Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value)
+    Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Y NAT US West Card Multicast"])
+    Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value = (Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+    Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Y NAT US East Card Multicast"])
+    Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value = (Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value)
+    Searched_Multicast_Row_Location_NAT_X_Source_Card_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["X NAT Card Source"])
+    Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value = (Searched_Multicast_Row_Location_NAT_X_Source_Card_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_X_Source_Card_Device_Value)
+    Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device = (
+    excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Y NAT Card Source"])
+    Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value = (Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_Source_Card_Device_Value)
+    Searched_Multicast_Row_Location_NAT_X_Core_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X Card Core/Service US West"])
+    Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value = (Searched_Multicast_Row_Location_NAT_X_Core_Multicast.values)
+    print(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_Value)
+    Searched_Multicast_Row_Location_NAT_Y_Core_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y Card Core/Service US West"])
+    Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value = (Searched_Multicast_Row_Location_NAT_Y_Core_Multicast.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_Value)
+    Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT X Card Core/Service US East"])
+    Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value = (Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East.values)
+    print(Searched_Multicast_Row_Location_NAT_X_Core_Multicast_US_East_Value)
+    Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["NAT Y Card Core/Service US East"])
+    Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value = (Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East.values)
+    print(Searched_Multicast_Row_Location_NAT_Y_Core_Multicast_US_East_Value)
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Stamford Gateway"])
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value = (Searched_Multicast_Row_Location_Stamford_Y_Gateway.values)
+    print(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Value)
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Stamford Ya Gateway Multicast"])
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value = (Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast.values)
+    print(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Multicast_Value)
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Stamford Ya Gateway Source"])
+    Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value = (Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source.values)
+    print(Searched_Multicast_Row_Location_Stamford_Y_Gateway_Source_Value)
+    Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Stamford Yb Gateway Multicast"])
+    Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value = (Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast.values)
+    print(Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Multicast_Value)
+    Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["Stamford Yb Gateway Source"])
+    Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value = (Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source.values)
+    print(Searched_Multicast_Row_Location_Stamford_Yb_Gateway_Source_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_X_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM X Multicast"])
+    Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value = (Searched_Multicast_Row_Location_HUB_DCM_X_Multicast.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_X_Multicast_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM Y Multicast"])
+    Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value = (Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Y_Multicast_Value)
+    Searched_Multicast_Row_Location_Service_Name = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["ServiceName"])
+    Searched_Multicast_Row_Location_Service_Name_Value = (Searched_Multicast_Row_Location_Service_Name.values)
+    print(Searched_Multicast_Row_Location_Service_Name_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Xa_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM X Xa Source"])
+    Searched_Multicast_Row_Location_HUB_DCM_Xa_Source_Value = (Searched_Multicast_Row_Location_HUB_DCM_Xa_Source.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Xa_Source_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Xb_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM X Xb Source"])
+    Searched_Multicast_Row_Location_HUB_DCM_Xb_Source_Value = (Searched_Multicast_Row_Location_HUB_DCM_Xb_Source.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Xb_Source_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Ya_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM Y Ya Source"])
+    Searched_Multicast_Row_Location_HUB_DCM_Ya_Source_Value = (Searched_Multicast_Row_Location_HUB_DCM_Ya_Source.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Ya_Source_Value)
+    Searched_Multicast_Row_Location_HUB_DCM_Yb_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB DCM Y Yb Source"])
+    Searched_Multicast_Row_Location_HUB_DCM_Yb_Source_Value = (Searched_Multicast_Row_Location_HUB_DCM_Yb_Source.values)
+    print(Searched_Multicast_Row_Location_HUB_DCM_Yb_Source_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_X_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB X TVE DCM Multicast"])
+    Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value = (Searched_Multicast_Row_Location_TVE_DCM_X_Multicast.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_X_Multicast_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_X_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB X TVE DCM Source"])
+    Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value = (Searched_Multicast_Row_Location_TVE_DCM_X_Source.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_X_Source_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB Y TVE DCM Multicast"])
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value = (Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_Y_Multicast_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Source = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB Y TVE DCM Source"])
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value = (Searched_Multicast_Row_Location_TVE_DCM_Y_Source.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_Y_Source_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB Y TVE DCM"])
+    Searched_Multicast_Row_Location_TVE_DCM_Y_Device_Value = (Searched_Multicast_Row_Location_TVE_DCM_Y_Device.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_Y_Device_Value)
+    Searched_Multicast_Row_Location_TVE_DCM_X_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["HUB X TVE DCM"])
+    Searched_Multicast_Row_Location_TVE_DCM_X_Device_Value = (Searched_Multicast_Row_Location_TVE_DCM_X_Device.values)
+    print(Searched_Multicast_Row_Location_TVE_DCM_X_Device_Value)
+    Searched_Multicast_Row_Location_IPX_Y_Device = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["IPX Y"])
+    Searched_Multicast_Row_Location_IPX_Y_Device_Value = (Searched_Multicast_Row_Location_IPX_Y_Device.values)
+    print(Searched_Multicast_Row_Location_IPX_Y_Device_Value)
+
+
+    Searched_Multicast_Row_Location_Gateway_Card_Group_API = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["GATEWAY API GROUP"])
+    Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value = (Searched_Multicast_Row_Location_Gateway_Card_Group_API.values.tolist())
+    print(Searched_Multicast_Row_Location_Gateway_Card_Group_API_Value)
+    Searched_Multicast_Row_Location_Gateway_Card_Service_API = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["GATEWAY API SERVICE"])
+    Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value = (Searched_Multicast_Row_Location_Gateway_Card_Service_API.values.tolist())
+    print(Searched_Multicast_Row_Location_Gateway_Card_Service_API_Value)
+
+    Searched_Multicast_Row_Location_Gateway_Card_MGMT_API = (excel_data_df_Sheet_1.iloc[Searched_Multicast_Row_Location]["GATEWAY API ADDRESS"])
+    Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value = (Searched_Multicast_Row_Location_Gateway_Card_MGMT_API.values.tolist())
+    print(Searched_Multicast_Row_Location_Gateway_Card_MGMT_API_Value)
+
+
+
+
+
+
+    if Searched_Multicast_Row_Location ==  48:
+        return Standard_Stamford_Sports_Multicast_Search()
+    elif Searched_Multicast_Row_Location ==  31:
+        return Standard_HUB_LX_Multicast_Search()
+    elif My_Multicast_List.__contains__(Group.get()):
+        return Standard_Peacock_Multicast_Search()
+    else:
+        Not_Found = Tk()
+        Not_Found.title("FINDIT")
+        Not_Found.geometry('200x35')
+        myButton_Not_Found = Label(Not_Found, text="Service Was Not Found", font=('Helvetica', 12, 'bold'))
+        myButton_Not_Found.pack()
+
+
+
+
+##Creating Function For Source IP Search
+def Okay2():
+    hello2 = "Searching " + Source.get()
+    myLabel2 = Label(root, text=hello2)
+    myLabel2.grid(row=1, column=6)
+
+##Creating Function For Service Search
+def Service_Search():
+    global Searched_Service_Row_Location_B
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Device_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XA_Value
+    global Searched_Service_Row_Location_Zixi_Multicast_XB_Value
+    global Searched_Service_Row_Location_Gateway_Device_Value
+    global Searched_Service_Row_Location_Zixi_Source_XA_Value
+    global Searched_Service_Row_Location_Zixi_Source_XB_Value
+    global Searched_Service_Row_Location_Gateway_Card_Group_Service_Value
+    global Searched_Service_Row_Location_Gateway_Card_Multicast_Value
+    global Searched_Service_Row_Location_IPX_Device_Value
+    global Searched_Service_Row_Location_IPX_Output_Port_Value
+    global Searched_Service_Row_Location_IPX_Multicast_Value
+    global Searched_Service_Row_Location_Gateway_Card_Source_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Card_Device_Y_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_X_Value
+    global Searched_Service_Row_Location_HUB_DCM_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value
+    global Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value
+    global Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_Value
+    global Searched_Service_Row_Location_NAT_Y_Core_Service_Value
+    global Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value
+    global Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value
+    global Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value
+    global Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value
+    global Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value
+    global Searched_Service_Row_Location_Service_Name_Value
+    global Searched_Service_Row_Location_HUB_DCM_Xa_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Xb_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Ya_Source_Value
+    global Searched_Service_Row_Location_HUB_DCM_Yb_Source_Value
+    global Searched_Service_Row_Location_TVE_DCM_Y_Source_Value
+    global Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value
+    global Searched_Service_Row_Location_TVE_DCM_X_Source_Value
+    global Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value
+    global Searched_Service_Row_Location_TVE_DCM_X_Device_Value
+    global Searched_Service_Row_Location_TVE_DCM_Y_Device_Value
+    global Searched_Service_Row_Location_IPX_Y_Device_Value
+
+
+    hello3 = "Searching " + Service.get()
+    myLabel3 = Label(root, text=hello3)
+    myLabel3.grid(row=2, column=6)
+    ##Indexing the location of the searched service to get Row#
+    Searched_Service_Row_Location = excel_data_df_Sheet_1[excel_data_df_Sheet_1['ServiceName'] == Service.get().upper()].index
+    print(Searched_Service_Row_Location)
+    ##Grabbing the cell value from that indexed row and specific column, in this case pulling the value of indexed cell and column "Zixi MGMT"
+    Searched_Service_Row_Location_Zixi_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Zixi Device"])
+    Searched_Service_Row_Location_Zixi_Device_Value = (Searched_Service_Row_Location_Zixi_Device.values)
+    print(Searched_Service_Row_Location_Zixi_Device_Value)
+    Searched_Service_Row_Location_Zixi_Multicast_XA = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Zixi Multicast XA"])
+    Searched_Service_Row_Location_Zixi_Multicast_XA_Value = (Searched_Service_Row_Location_Zixi_Multicast_XA.values)
+    print(Searched_Service_Row_Location_Zixi_Multicast_XA_Value)
+    Searched_Service_Row_Location_Zixi_Multicast_XB = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Zixi Multicast XB"])
+    Searched_Service_Row_Location_Zixi_Multicast_XB_Value = (Searched_Service_Row_Location_Zixi_Multicast_XB.values)
+    print(Searched_Service_Row_Location_Zixi_Multicast_XB_Value)
+    Searched_Service_Row_Location_Gateway_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Gateway"])
+    Searched_Service_Row_Location_Gateway_Device_Value = (Searched_Service_Row_Location_Gateway_Device.values)
+    print(Searched_Service_Row_Location_Gateway_Device_Value)
+    Searched_Service_Row_Location_Zixi_Source_XA = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Zixi Source XA"])
+    Searched_Service_Row_Location_Zixi_Source_XA_Value = (Searched_Service_Row_Location_Zixi_Source_XA.values)
+    print(Searched_Service_Row_Location_Zixi_Source_XA_Value)
+    Searched_Service_Row_Location_Zixi_Source_XB = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Zixi Source XB"])
+    Searched_Service_Row_Location_Zixi_Source_XB_Value = (Searched_Service_Row_Location_Zixi_Source_XB.values)
+    print(Searched_Service_Row_Location_Zixi_Source_XB_Value)
+    Searched_Service_Row_Location_Gateway_Card_Group_Service = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Gateway Card Group/Service"])
+    Searched_Service_Row_Location_Gateway_Card_Group_Service_Value = (Searched_Service_Row_Location_Gateway_Card_Group_Service.values)
+    print(Searched_Service_Row_Location_Gateway_Card_Group_Service_Value)
+    Searched_Service_Row_Location_Gateway_Card_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Gateway Card Multicast"])
+    Searched_Service_Row_Location_Gateway_Card_Multicast_Value = (Searched_Service_Row_Location_Gateway_Card_Multicast.values)
+    print(Searched_Service_Row_Location_Gateway_Card_Multicast_Value)
+    Searched_Service_Row_Location_IPX_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["IPX X"])
+    Searched_Service_Row_Location_IPX_Device_Value = (Searched_Service_Row_Location_IPX_Device.values)
+    print(Searched_Service_Row_Location_IPX_Device_Value)
+    Searched_Service_Row_Location_IPX_Output_Port = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["IPX Output Port"])
+    Searched_Service_Row_Location_IPX_Output_Port_Value = (Searched_Service_Row_Location_IPX_Output_Port.values)
+    print(Searched_Service_Row_Location_IPX_Output_Port_Value)
+    Searched_Service_Row_Location_IPX_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["IPX Multicast"])
+    Searched_Service_Row_Location_IPX_Multicast_Value = (Searched_Service_Row_Location_IPX_Multicast.values)
+    print(Searched_Service_Row_Location_IPX_Multicast_Value)
+    Searched_Service_Row_Location_Gateway_Card_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Gateway Card Source"])
+    Searched_Service_Row_Location_Gateway_Card_Source_Value = (Searched_Service_Row_Location_Gateway_Card_Source.values)
+    print(Searched_Service_Row_Location_Gateway_Card_Source_Value)
+    Searched_Service_Row_Location_NAT_Card_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X"])
+    Searched_Service_Row_Location_NAT_Card_Device_X_Value = (Searched_Service_Row_Location_NAT_Card_Device_X.values)
+    print(Searched_Service_Row_Location_NAT_Card_Device_X_Value)
+    Searched_Service_Row_Location_NAT_Card_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y"])
+    Searched_Service_Row_Location_NAT_Card_Device_Y_Value = (Searched_Service_Row_Location_NAT_Card_Device_Y.values)
+    print(Searched_Service_Row_Location_NAT_Card_Device_Y_Value)
+    Searched_Service_Row_Location_HUB_DCM_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM X"])
+    Searched_Service_Row_Location_HUB_DCM_Device_X_Value = (Searched_Service_Row_Location_HUB_DCM_Device_X.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Device_X_Value)
+    Searched_Service_Row_Location_HUB_DCM_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM Y"])
+    Searched_Service_Row_Location_HUB_DCM_Device_Y_Value = (Searched_Service_Row_Location_HUB_DCM_Device_Y.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Device_Y_Value)
+    Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X EC CARD"])
+    Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value = (Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X.values)
+    print(Searched_Service_Row_Location_NAT_X_EC_CARD_MGMT_Device_X_Value)
+    Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y EC CARD"])
+    Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value = (Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y.values)
+    print(Searched_Service_Row_Location_NAT_Y_EC_CARD_MGMT_Device_Y_Value)
+    Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X EC CARD Multicast"])
+    Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value = (Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X.values)
+    print(Searched_Service_Row_Location_NAT_X_EC_Card_Multicast_Device_X_Value)
+    Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y EC CARD Multicast"])
+    Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value = (Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y.values)
+    print(Searched_Service_Row_Location_NAT_Y_EC_Card_Multicast_Device_Y_Value)
+    Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X EC CARD Source"])
+    Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value = (Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X.values)
+    print(Searched_Service_Row_Location_NAT_X_EC_Card_Source_Device_X_Value)
+    Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y EC CARD Source"])
+    Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value = (Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y.values)
+    print(Searched_Service_Row_Location_NAT_Y_EC_Card_Source_Device_Y_Value)
+    Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["X NAT US West Card Multicast"])
+    Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value = (Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device.values)
+    print(Searched_Service_Row_Location_NAT_X_US_WEST_Card_Multicast_Device_Value)
+    Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["X NAT US East Card Multicast"])
+    Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value = (Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device.values)
+    print(Searched_Service_Row_Location_NAT_X_US_EAST_Card_Multicast_Device_Value)
+    Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Y NAT US West Card Multicast"])
+    Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value = (Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device.values)
+    print(Searched_Service_Row_Location_NAT_Y_US_WEST_Card_Multicast_Device_Value)
+    Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Y NAT US East Card Multicast"])
+    Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value = (Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device.values)
+    print(Searched_Service_Row_Location_NAT_Y_US_EAST_Card_Multicast_Device_Value)
+    Searched_Service_Row_Location_NAT_X_Source_Card_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["X NAT Card Source"])
+    Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value = (Searched_Service_Row_Location_NAT_X_Source_Card_Device.values)
+    print(Searched_Service_Row_Location_NAT_X_Source_Card_Device_Value)
+    Searched_Service_Row_Location_NAT_Y_Source_Card_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Y NAT Card Source"])
+    Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value = (Searched_Service_Row_Location_NAT_Y_Source_Card_Device.values)
+    print(Searched_Service_Row_Location_NAT_Y_Source_Card_Device_Value)
+    Searched_Service_Row_Location_NAT_X_Core_Service = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X Card Core/Service US West"])
+    Searched_Service_Row_Location_NAT_X_Core_Service_Value = (Searched_Service_Row_Location_NAT_X_Core_Service.values)
+    print(Searched_Service_Row_Location_NAT_X_Core_Service_Value)
+    Searched_Service_Row_Location_NAT_Y_Core_Service = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y Card Core/Service US West"])
+    Searched_Service_Row_Location_NAT_Y_Core_Service_Value = (Searched_Service_Row_Location_NAT_Y_Core_Service.values)
+    print(Searched_Service_Row_Location_NAT_Y_Core_Service_Value)
+    Searched_Service_Row_Location_NAT_X_Core_Service_US_East = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT X Card Core/Service US East"])
+    Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value = (Searched_Service_Row_Location_NAT_X_Core_Service_US_East.values)
+    print(Searched_Service_Row_Location_NAT_X_Core_Service_US_East_Value)
+    Searched_Service_Row_Location_NAT_Y_Core_Service_US_East = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["NAT Y Card Core/Service US East"])
+    Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value = (Searched_Service_Row_Location_NAT_Y_Core_Service_US_East.values)
+    print(Searched_Service_Row_Location_NAT_Y_Core_Service_US_East_Value)
+    Searched_Service_Row_Location_Stamford_Y_Gateway = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Stamford Gateway"])
+    Searched_Service_Row_Location_Stamford_Y_Gateway_Value = (Searched_Service_Row_Location_Stamford_Y_Gateway.values)
+    print(Searched_Service_Row_Location_Stamford_Y_Gateway_Value)
+    Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Stamford Ya Gateway Multicast"])
+    Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value = (Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast.values)
+    print(Searched_Service_Row_Location_Stamford_Y_Gateway_Multicast_Value)
+    Searched_Service_Row_Location_Stamford_Y_Gateway_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Stamford Ya Gateway Source"])
+    Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value = (Searched_Service_Row_Location_Stamford_Y_Gateway_Source.values)
+    print(Searched_Service_Row_Location_Stamford_Y_Gateway_Source_Value)
+    Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Stamford Yb Gateway Multicast"])
+    Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value = (Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast.values)
+    print(Searched_Service_Row_Location_Stamford_Yb_Gateway_Multicast_Value)
+    Searched_Service_Row_Location_Stamford_Yb_Gateway_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["Stamford Yb Gateway Source"])
+    Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value = (Searched_Service_Row_Location_Stamford_Yb_Gateway_Source.values)
+    print(Searched_Service_Row_Location_Stamford_Yb_Gateway_Source_Value)
+    Searched_Service_Row_Location_HUB_DCM_X_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM X Multicast"])
+    Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value = (Searched_Service_Row_Location_HUB_DCM_X_Multicast.values)
+    print(Searched_Service_Row_Location_HUB_DCM_X_Multicast_Value)
+    Searched_Service_Row_Location_HUB_DCM_Y_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM Y Multicast"])
+    Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value = (Searched_Service_Row_Location_HUB_DCM_Y_Multicast.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Y_Multicast_Value)
+    Searched_Service_Row_Location_Service_Name = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["ServiceName"])
+    Searched_Service_Row_Location_Service_Name_Value = (Searched_Service_Row_Location_Service_Name.values)
+    print(Searched_Service_Row_Location_Service_Name_Value)
+    Searched_Service_Row_Location_HUB_DCM_Xa_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM X Xa Source"])
+    Searched_Service_Row_Location_HUB_DCM_Xa_Source_Value = (Searched_Service_Row_Location_HUB_DCM_Xa_Source.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Xa_Source_Value)
+    Searched_Service_Row_Location_HUB_DCM_Xb_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM X Xb Source"])
+    Searched_Service_Row_Location_HUB_DCM_Xb_Source_Value = (Searched_Service_Row_Location_HUB_DCM_Xb_Source.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Xb_Source_Value)
+    Searched_Service_Row_Location_HUB_DCM_Ya_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM Y Ya Source"])
+    Searched_Service_Row_Location_HUB_DCM_Ya_Source_Value = (Searched_Service_Row_Location_HUB_DCM_Ya_Source.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Ya_Source_Value)
+    Searched_Service_Row_Location_HUB_DCM_Yb_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB DCM Y Yb Source"])
+    Searched_Service_Row_Location_HUB_DCM_Yb_Source_Value = (Searched_Service_Row_Location_HUB_DCM_Yb_Source.values)
+    print(Searched_Service_Row_Location_HUB_DCM_Yb_Source_Value)
+    Searched_Service_Row_Location_TVE_DCM_X_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB X TVE DCM Multicast"])
+    Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value = (Searched_Service_Row_Location_TVE_DCM_X_Multicast.values)
+    print(Searched_Service_Row_Location_TVE_DCM_X_Multicast_Value)
+    Searched_Service_Row_Location_TVE_DCM_X_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB X TVE DCM Source"])
+    Searched_Service_Row_Location_TVE_DCM_X_Source_Value = (Searched_Service_Row_Location_TVE_DCM_X_Source.values)
+    print(Searched_Service_Row_Location_TVE_DCM_X_Source_Value)
+    Searched_Service_Row_Location_TVE_DCM_Y_Multicast = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB Y TVE DCM Multicast"])
+    Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value = (Searched_Service_Row_Location_TVE_DCM_Y_Multicast.values)
+    print(Searched_Service_Row_Location_TVE_DCM_Y_Multicast_Value)
+    Searched_Service_Row_Location_TVE_DCM_Y_Source = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB Y TVE DCM Source"])
+    Searched_Service_Row_Location_TVE_DCM_Y_Source_Value = (Searched_Service_Row_Location_TVE_DCM_Y_Source.values)
+    print(Searched_Service_Row_Location_TVE_DCM_Y_Source_Value)
+    Searched_Service_Row_Location_TVE_DCM_Y_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB Y TVE DCM"])
+    Searched_Service_Row_Location_TVE_DCM_Y_Device_Value = (Searched_Service_Row_Location_TVE_DCM_Y_Device.values)
+    print(Searched_Service_Row_Location_TVE_DCM_Y_Device_Value)
+    Searched_Service_Row_Location_TVE_DCM_X_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["HUB X TVE DCM"])
+    Searched_Service_Row_Location_TVE_DCM_X_Device_Value = (Searched_Service_Row_Location_TVE_DCM_X_Device.values)
+    print(Searched_Service_Row_Location_TVE_DCM_X_Device_Value)
+    Searched_Service_Row_Location_IPX_Y_Device = (excel_data_df_Sheet_1.iloc[Searched_Service_Row_Location]["IPX Y"])
+    Searched_Service_Row_Location_IPX_Y_Device_Value = (Searched_Service_Row_Location_IPX_Y_Device.values)
+    print(Searched_Service_Row_Location_IPX_Y_Device_Value)
+
+
+    if My_Service_List.__contains__(Service.get().upper()) and (Service.get().upper()) == "LX NATIONAL":
+       return Standard_HUB_LX_Service_Search()
+
+    elif My_Service_List.__contains__(Service.get().upper()) and (Service.get().upper()) == "PEACOCK EPL":
+       return Standard_Stamford_Sports_Service_Search()
+
+    elif My_Service_List.__contains__(Service.get().upper()):
+       return Standard_Peacock_Service_Search()
+
+    else:
+        Not_Found = Tk()
+        Not_Found.title("FINDIT")
+        Not_Found.geometry('200x35')
+        myButton_Not_Found = Label(Not_Found, text="Service Was Not Found", font=('Helvetica', 12, 'bold'))
+        myButton_Not_Found.pack()
+
+##Creating Buttons
+myButton_Group = Button(root, text='Group Multicast IP', command=Multicast_Search)
+myButton_Source = Button(root, text='Source IP', command=Okay2)
+myButton_Service = Button(root, text='Service Name', command=Service_Search)
+
+##Creating header column names
+Column_Name_O = excel_data_df_Sheet_1.columns[14]
+print(Column_Name_O)
+
+Column_Name_AF = excel_data_df_Sheet_1.columns[31]
+print(Column_Name_AF)
+
+Column_Name_AJ = excel_data_df_Sheet_1.columns[35]
+print(Column_Name_AJ)
+
+Column_Name_T = excel_data_df_Sheet_1.columns[19]
+print(Column_Name_T)
+
+Column_Name_Z = excel_data_df_Sheet_1.columns[25]
+print(Column_Name_Z)
+
+Column_Name_AM = excel_data_df_Sheet_1.columns[38]
+print(Column_Name_AM)
+
+Column_Name_AQ = excel_data_df_Sheet_1.columns[42]
+print(Column_Name_AQ)
+
+Column_Name_BA = excel_data_df_Sheet_1.columns[52]
+print(Column_Name_BA)
+
+Column_Name_BD = excel_data_df_Sheet_1.columns[55]
+print(Column_Name_BD)
+
+Column_Name_BM = excel_data_df_Sheet_1.columns[64]
+print(Column_Name_BM)
+
+Column_Name_BR = excel_data_df_Sheet_1.columns[69]
+print(Column_Name_BR)
+
+Column_Name_BU = excel_data_df_Sheet_1.columns[72]
+print(Column_Name_BU)
+
+Column_Name_BX = excel_data_df_Sheet_1.columns[75]
+print(Column_Name_BX)
+
+##Displaying Buttons
+myButton_Group.grid(row=0, column=1)
+myButton_Source.grid(row=1, column=1)
+myButton_Service.grid(row=2, column=1)
+
+root.mainloop()
